@@ -105,6 +105,36 @@ function useScrollProgress() {
   return progress
 }
 
+function useBreakingTransform(sectionRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const context = gsap.context(() => {
+      const oldWords = gsap.utils.toArray<HTMLElement>('.breaking-word')
+      const newWords = gsap.utils.toArray<HTMLElement>('.breaking-new-word')
+      const fragments = gsap.utils.toArray<HTMLElement>('.breaking-fragment')
+      const timeline = gsap.timeline({
+        defaults: { ease: 'power3.inOut' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 72%',
+          end: 'bottom 18%',
+          scrub: 0.8,
+        },
+      })
+      timeline
+        .to(oldWords[0], { x: -90, y: -34, rotate: -8, opacity: 0.28 }, 0)
+        .to(oldWords[1], { x: 100, y: -12, rotate: 7, opacity: 0.18 }, 0.05)
+        .to(oldWords[2], { x: -70, y: 38, rotate: 5, opacity: 0.14 }, 0.1)
+        .to(oldWords[3], { x: 120, y: 44, rotate: -6, opacity: 0.08 }, 0.12)
+        .to(fragments, { opacity: 1, scale: 1.15, z: 100, stagger: 0.04 }, 0.12)
+        .fromTo(newWords, { y: 42, opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { y: 0, opacity: 1, clipPath: 'inset(0% 0 0 0)', stagger: 0.08 }, 0.48)
+        .to(fragments, { x: 0, y: 0, rotate: 0, scale: 1, z: 0, opacity: 0.38, stagger: 0.03 }, 0.65)
+    }, section)
+    return () => context.revert()
+  }, [sectionRef])
+}
+
 function Navigation({ active, open, setOpen }: { active: string; open: boolean; setOpen: (value: boolean) => void }) {
   return (
     <header className={`site-nav ${open ? 'site-nav--open' : ''}`}>
@@ -139,7 +169,7 @@ function Mark({ children }: { children: React.ReactNode }) {
 function Hero() {
   return (
     <section className="hero" id="home" data-section>
-      <video className="hero__media" autoPlay loop muted playsInline preload="metadata" poster="/assets/hero-poster.jpg" aria-label="Abstract motion texture from the portfolio artwork">
+      <video className="hero__media" autoPlay loop muted playsInline preload="auto" poster="/assets/hero-poster.jpg" aria-label="Looping editorial motion background from the portfolio artwork">
         <source src="/assets/hero.mp4" type="video/mp4" />
       </video>
       <div className="hero__wash" />
@@ -277,12 +307,14 @@ function ExperienceSection() {
 }
 
 function BreakingSection() {
+  const sectionRef = useRef<HTMLElement | null>(null)
+  useBreakingTransform(sectionRef)
   return (
-    <section className="breaking section-ink" id="breaking" data-section>
+    <section className="breaking section-ink" id="breaking" data-section ref={sectionRef}>
       <SectionLabel number="06" label="Breaking things" dark />
       <div className="breaking__layout">
-        <div className="breaking__copy" data-reveal><p className="eyebrow eyebrow--light">A PERSONAL OPERATING SYSTEM</p><h2>I LIKE <em>BREAKING THINGS,</em><br /> LEARNING THEM.</h2><div className="breaking__cards">{['Curiosity', 'Persistence', 'Deeper understanding', 'Better tools'].map((card) => <span key={card}>{card}<ArrowUpRight size={14} /></span>)}</div></div>
-        <div className="breaking__visual" data-reveal><div className="shard shard--one" /><div className="shard shard--two" /><div className="shard shard--three" /><div className="breaking__visual-label">FRAGMENTS / 06</div></div>
+        <div className="breaking__copy" data-reveal><p className="eyebrow eyebrow--light">A PERSONAL OPERATING SYSTEM</p><div className="breaking-stage"><h2 className="breaking-message breaking-message--old" aria-label="I like breaking things, learning them."><span className="breaking-word">I</span> <span className="breaking-word">LIKE</span> <span className="breaking-word breaking-word--accent">BREAKING THINGS,</span><br /><span className="breaking-word">LEARNING THEM.</span></h2><h2 className="breaking-message breaking-message--new" aria-label="I transform ideas into production-ready applications."><span className="breaking-new-word">I TRANSFORM</span> <span className="breaking-new-word breaking-new-word--accent">IDEAS</span><br /><span className="breaking-new-word">INTO</span> <span className="breaking-new-word">PRODUCTION-READY</span><br /><span className="breaking-new-word">APPLICATIONS.</span></h2></div><div className="breaking__cards">{['Curiosity', 'Persistence', 'Deeper understanding', 'Better tools'].map((card) => <span key={card}>{card}<ArrowUpRight size={14} /></span>)}</div></div>
+        <div className="breaking__visual" data-reveal><div className="breaking-fragment shard shard--one" /><div className="breaking-fragment shard shard--two" /><div className="breaking-fragment shard shard--three" /><div className="breaking-fragment breaking-fragment--line" /><div className="breaking__visual-label">SCROLL / BREAK / REBUILD</div></div>
       </div>
     </section>
   )

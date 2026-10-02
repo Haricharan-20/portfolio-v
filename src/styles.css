@@ -483,3 +483,52 @@ h2 em { color: var(--accent); font-style: normal; }
   .about, .skills { width: 100%; float: none; min-height: 0; }
   .projects { clear: both; }
 }
+
+/* Refinement pass: the video remains the dominant hero layer; overlays are editorial, not smoky. */
+.hero__media { filter: saturate(.82) contrast(1.12) brightness(.96); }
+.hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.72) 0%, rgba(233,225,213,.28) 30%, rgba(233,225,213,.02) 66%, rgba(19,19,19,.12) 100%), linear-gradient(0deg, rgba(19,19,19,.2), transparent 28%); mix-blend-mode: normal; }
+.hero__grid { opacity: .11; mix-blend-mode: multiply; }
+.hero__detail, .hero__rail-card { backdrop-filter: none; }
+
+.breaking { perspective: 900px; }
+.breaking__layout { min-height: 410px; }
+.breaking-stage { position: relative; min-height: clamp(180px, 18vw, 300px); transform-style: preserve-3d; }
+.breaking-message { position: absolute; inset: 0 auto auto 0; width: min(100%, 960px); margin: 0; }
+.breaking-message--old { z-index: 2; }
+.breaking-message--new { z-index: 1; opacity: .06; color: var(--paper); }
+.breaking-word, .breaking-new-word { display: inline-block; will-change: transform, opacity, clip-path; }
+.breaking-word--accent, .breaking-new-word--accent { color: var(--accent); }
+.breaking__visual { transform-style: preserve-3d; }
+.breaking-fragment { opacity: .32; transform-style: preserve-3d; will-change: transform, opacity; }
+.breaking-fragment--line { position: absolute; top: 66%; right: 8%; width: 210px; height: 1px; background: var(--accent); transform: rotate(-21deg); opacity: .42; }
+.breaking__visual-label { letter-spacing: .16em; }
+@media (max-width: 700px) {
+  .hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.46), rgba(233,225,213,.04) 72%), linear-gradient(0deg, rgba(19,19,19,.22), transparent 34%); }
+  .breaking { perspective: 650px; }
+  .breaking__layout { min-height: 470px; }
+  .breaking-stage { min-height: 270px; }
+  .breaking-message { width: 100%; }
+  .breaking-message--new { font-size: clamp(52px, 15vw, 80px); }
+  .breaking__visual { min-height: 110px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .breaking-message--new { opacity: 1; }
+  .breaking-message--old { opacity: 0; }
+  .shard { animation: none; }
+}
+
+/* Final hero contrast correction: keep the plate visible while making the live title legible. */
+.hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.34) 0%, rgba(233,225,213,.11) 30%, rgba(233,225,213,.01) 66%, rgba(19,19,19,.08) 100%), linear-gradient(0deg, rgba(19,19,19,.12), transparent 28%); }
+.hero__title-line--cream { color: #f1ebe2; text-shadow: 2px 2px 0 rgba(19,19,19,.72), -1px -1px 0 rgba(19,19,19,.26); }
+.hero__signature { text-shadow: 1px 1px 0 rgba(233,225,213,.58); }
+@media (max-width: 700px) {
+  .hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.18), rgba(233,225,213,.02) 72%), linear-gradient(0deg, rgba(19,19,19,.14), transparent 34%); }
+  .hero__title-line--cream { text-shadow: 1px 2px 0 rgba(19,19,19,.74); }
+}
+
+.breaking-message--new { opacity: 1; }
+.breaking-new-word { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .breaking-message--new { opacity: 1; }
+  .breaking-new-word { opacity: 1; clip-path: none; }
+}
