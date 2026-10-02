@@ -171,7 +171,6 @@ function Hero() {
       <video className="hero__media" autoPlay loop muted playsInline preload="auto" poster="/assets/hero-poster.jpg" aria-label="Looping editorial motion background from the portfolio artwork">
         <source src="/assets/hero.mp4" type="video/mp4" />
       </video>
-      <div className="hero__portrait-layer" aria-hidden="true"><img src="/assets/portrait-detail.jpg" alt="" /></div>
       <div className="hero__wash" />
       <div className="hero__grid" />
       <div className="hero__topline">

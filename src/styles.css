@@ -581,3 +581,16 @@ h2 em { color: var(--accent); font-style: normal; }
 @media (max-width: 700px) {
   .hero__portrait-layer { top: 48%; right: 18%; width: 28vw; height: 18%; }
 }
+
+/* Supplied hero-video pass: the MP4 already contains the hand, portrait, eye inset, and paper composition. */
+.hero__media { object-position: 50% center; filter: saturate(.94) contrast(1.08) brightness(.94); }
+.hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.14) 0%, rgba(233,225,213,.025) 42%, rgba(19,19,19,.12) 100%), linear-gradient(0deg, rgba(19,19,19,.18), transparent 30%); mix-blend-mode: normal; }
+.hero__grid { opacity: .17; mix-blend-mode: multiply; }
+.hero__title { text-shadow: 3px 3px 0 rgba(19,19,19,.2); }
+.hero__title-line--cream { color: var(--accent); text-shadow: 3px 3px 0 rgba(19,19,19,.68), -1px -1px 0 rgba(19,19,19,.22); }
+.hero__detail { right: 30%; bottom: 9%; width: 128px; opacity: .94; }
+@media (max-width: 700px) {
+  .hero__media { object-position: 58% center; }
+  .hero__wash { background: linear-gradient(90deg, rgba(233,225,213,.1), rgba(233,225,213,.01) 72%), linear-gradient(0deg, rgba(19,19,19,.2), transparent 34%); }
+  .hero__detail { right: 21%; bottom: 53px; width: 92px; }
+}

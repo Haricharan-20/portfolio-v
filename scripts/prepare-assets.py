@@ -28,10 +28,5 @@ for name, box in crops.items():
     image.thumbnail((1600, 1200), Image.Resampling.LANCZOS)
     image.save(assets / name, quality=90, optimize=True)
 
-# The reference package has no MP4. Create a subtle motion fallback from the supplied visual,
-# keeping the original pixels undistorted while giving the hero a true video layer.
-subprocess.run([
-    'ffmpeg', '-y', '-loop', '1', '-i', str(assets / 'hero-poster.jpg'),
-    '-vf', "scale=1920:-2,crop=1920:1080,zoompan=z='min(zoom+0.00020,1.05)':d=300:s=1920x1080:fps=30,format=yuv420p",
-    '-t', '10', '-an', '-movflags', '+faststart', str(assets / 'hero.mp4')
-], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+# The hero MP4 is supplied by the user and is intentionally kept untouched.
+# This helper only prepares still-image crops; it must never overwrite hero.mp4.

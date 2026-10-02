@@ -17,7 +17,7 @@ pnpm run build
 
 ## Implementation notes
 
-- Full-bleed hero video uses `public/assets/hero.mp4` with `hero-poster.jpg` as the poster fallback.
+- Full-bleed hero video uses the user-supplied `public/assets/hero.mp4` with a poster extracted from its first frame; the source video is not regenerated or replaced by a still.
 - The page uses restrained CSS/GSAP/Lenis motion so the supplied editorial composition stays visually exact.
 - Portfolio content is data-driven in `src/data.ts`.
 - The site is a single accessible scroll route with `public/manus-routes.json` for managed routing.
