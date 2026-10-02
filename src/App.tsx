@@ -110,26 +110,25 @@ function useBreakingTransform(sectionRef: React.RefObject<HTMLElement | null>) {
     const section = sectionRef.current
     if (!section || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const context = gsap.context(() => {
-      const oldWords = gsap.utils.toArray<HTMLElement>('.breaking-word')
-      const newWords = gsap.utils.toArray<HTMLElement>('.breaking-new-word')
-      const fragments = gsap.utils.toArray<HTMLElement>('.breaking-fragment')
-      const timeline = gsap.timeline({
-        defaults: { ease: 'power3.inOut' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 72%',
-          end: 'bottom 18%',
-          scrub: 0.8,
-        },
+      const media = gsap.matchMedia()
+      media.add({ mobile: '(max-width: 700px)', desktop: '(min-width: 701px)' }, (conditions) => {
+        const isMobile = Boolean(conditions?.mobile)
+        const chars = gsap.utils.toArray<HTMLElement>('.breaking-char')
+        const track = section.querySelector<HTMLElement>('.breaking-track')
+        const fragments = gsap.utils.toArray<HTMLElement>('.breaking-fragment')
+        if (!track) return () => undefined
+        gsap.set(chars, { opacity: 0.48, y: (index) => (index % 2 ? -18 : 18) * (isMobile ? 0.55 : 1), rotate: (index) => (index % 2 ? -2 : 2) * (isMobile ? 0.65 : 1) })
+        const horizontalTravel = isMobile ? `-${Math.min(window.innerWidth * 0.08, 28)}px` : `-${Math.min(window.innerWidth * 0.2, 280)}px`
+        const timeline = gsap.timeline({
+          defaults: { ease: 'power2.out' },
+          scrollTrigger: { trigger: section, start: 'top top', end: isMobile ? '+=125%' : '+=155%', scrub: 1, pin: true, anticipatePin: 1 },
+        })
+        timeline
+          .to(track, { x: horizontalTravel, ease: 'none', duration: 1 }, 0)
+          .to(chars, { opacity: 1, y: 0, rotate: 0, z: (index) => (index % 3 - 1) * (isMobile ? 10 : 24), stagger: { each: isMobile ? 0.012 : 0.018, from: 'start' }, duration: 0.82 }, 0.06)
+          .to(fragments, { x: (index) => (index % 2 ? -12 : 15) * (isMobile ? 0.45 : 1), y: (index) => (index % 2 ? 10 : -12) * (isMobile ? 0.45 : 1), rotate: (index) => (index % 2 ? -8 : 8), scale: 1.08, opacity: 0.8, stagger: 0.03 }, 0.12)
+        return () => timeline.kill()
       })
-      timeline
-        .to(oldWords[0], { x: -90, y: -34, rotate: -8, opacity: 0.28 }, 0)
-        .to(oldWords[1], { x: 100, y: -12, rotate: 7, opacity: 0.18 }, 0.05)
-        .to(oldWords[2], { x: -70, y: 38, rotate: 5, opacity: 0.14 }, 0.1)
-        .to(oldWords[3], { x: 120, y: 44, rotate: -6, opacity: 0.08 }, 0.12)
-        .to(fragments, { opacity: 1, scale: 1.15, z: 100, stagger: 0.04 }, 0.12)
-        .fromTo(newWords, { y: 42, opacity: 0, clipPath: 'inset(100% 0 0 0)' }, { y: 0, opacity: 1, clipPath: 'inset(0% 0 0 0)', stagger: 0.08 }, 0.48)
-        .to(fragments, { x: 0, y: 0, rotate: 0, scale: 1, z: 0, opacity: 0.38, stagger: 0.03 }, 0.65)
     }, section)
     return () => context.revert()
   }, [sectionRef])
@@ -172,6 +171,7 @@ function Hero() {
       <video className="hero__media" autoPlay loop muted playsInline preload="auto" poster="/assets/hero-poster.jpg" aria-label="Looping editorial motion background from the portfolio artwork">
         <source src="/assets/hero.mp4" type="video/mp4" />
       </video>
+      <div className="hero__portrait-layer" aria-hidden="true"><img src="/assets/portrait-detail.jpg" alt="" /></div>
       <div className="hero__wash" />
       <div className="hero__grid" />
       <div className="hero__topline">
@@ -313,7 +313,15 @@ function BreakingSection() {
     <section className="breaking section-ink" id="breaking" data-section ref={sectionRef}>
       <SectionLabel number="06" label="Breaking things" dark />
       <div className="breaking__layout">
-        <div className="breaking__copy" data-reveal><p className="eyebrow eyebrow--light">A PERSONAL OPERATING SYSTEM</p><div className="breaking-stage"><h2 className="breaking-message breaking-message--old" aria-label="I like breaking things, learning them."><span className="breaking-word">I</span> <span className="breaking-word">LIKE</span> <span className="breaking-word breaking-word--accent">BREAKING THINGS,</span><br /><span className="breaking-word">LEARNING THEM.</span></h2><h2 className="breaking-message breaking-message--new" aria-label="I transform ideas into production-ready applications."><span className="breaking-new-word">I TRANSFORM</span> <span className="breaking-new-word breaking-new-word--accent">IDEAS</span><br /><span className="breaking-new-word">INTO</span> <span className="breaking-new-word">PRODUCTION-READY</span><br /><span className="breaking-new-word">APPLICATIONS.</span></h2></div><div className="breaking__cards">{['Curiosity', 'Persistence', 'Deeper understanding', 'Better tools'].map((card) => <span key={card}>{card}<ArrowUpRight size={14} /></span>)}</div></div>
+        <div className="breaking__copy" data-reveal>
+          <p className="eyebrow eyebrow--light">A PERSONAL OPERATING SYSTEM</p>
+          <div className="breaking-stage" aria-label="I like breaking things, learning them.">
+            <div className="breaking-track" aria-hidden="true">
+              {['I', 'LIKE', 'BREAKING', 'THINGS,', 'LEARNING', 'THEM.'].map((word, wordIndex) => <span className={`breaking-word ${wordIndex === 2 ? 'breaking-word--accent' : ''}`} key={word}>{Array.from(word).map((character, characterIndex) => <span className="breaking-char" key={`${word}-${characterIndex}`}>{character}</span>)}{wordIndex < 5 && <span className="breaking-space">&nbsp;</span>}</span>)}
+            </div>
+          </div>
+          <div className="breaking__cards">{['Curiosity', 'Persistence', 'Deeper understanding', 'Better tools'].map((card) => <span key={card}>{card}<ArrowUpRight size={14} /></span>)}</div>
+        </div>
         <div className="breaking__visual" data-reveal><div className="breaking-fragment shard shard--one" /><div className="breaking-fragment shard shard--two" /><div className="breaking-fragment shard shard--three" /><div className="breaking-fragment breaking-fragment--line" /><div className="breaking__visual-label">SCROLL / BREAK / REBUILD</div></div>
       </div>
     </section>
