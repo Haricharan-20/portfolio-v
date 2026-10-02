@@ -18,7 +18,7 @@ pnpm run build
 ## Implementation notes
 
 - Full-bleed hero video uses `public/assets/hero.mp4` with `hero-poster.jpg` as the poster fallback.
-- The 3D security-core accent is lazy-loaded from `src/components/MorphScene.tsx` and degrades naturally when motion is reduced.
+- The page uses restrained CSS/GSAP/Lenis motion so the supplied editorial composition stays visually exact.
 - Portfolio content is data-driven in `src/data.ts`.
 - The site is a single accessible scroll route with `public/manus-routes.json` for managed routing.
 

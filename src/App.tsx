@@ -1,12 +1,11 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
-import { ArrowDownRight, ArrowUpRight, Check, ExternalLink, Menu, MoveRight, Plus, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowDownRight, ArrowUpRight, Check, ExternalLink, Menu, MoveRight, X } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { experience, library, navItems, projects, skills, socials, type Project } from './data'
 
 gsap.registerPlugin(ScrollTrigger)
-const MorphScene = lazy(() => import('./components/MorphScene'))
 
 function useMotionSystem(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -283,7 +282,7 @@ function BreakingSection() {
       <SectionLabel number="06" label="Breaking things" dark />
       <div className="breaking__layout">
         <div className="breaking__copy" data-reveal><p className="eyebrow eyebrow--light">A PERSONAL OPERATING SYSTEM</p><h2>I LIKE <em>BREAKING THINGS,</em><br /> LEARNING THEM.</h2><div className="breaking__cards">{['Curiosity', 'Persistence', 'Deeper understanding', 'Better tools'].map((card) => <span key={card}>{card}<ArrowUpRight size={14} /></span>)}</div></div>
-        <div className="breaking__visual" data-reveal><Suspense fallback={<div className="morph-scene morph-scene--fallback" />}><MorphScene /></Suspense><div className="shard shard--one" /><div className="shard shard--two" /><div className="shard shard--three" /></div>
+        <div className="breaking__visual" data-reveal><div className="shard shard--one" /><div className="shard shard--two" /><div className="shard shard--three" /><div className="breaking__visual-label">FRAGMENTS / 06</div></div>
       </div>
     </section>
   )
