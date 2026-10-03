@@ -81,15 +81,17 @@ export const experience = [
 ]
 
 export const library = [
-  { title: 'Atomic Habits', author: 'James Clear', image: '/assets/library-01.jpg', tone: 'cream' },
-  { title: 'Deep Work', author: 'Cal Newport', image: '/assets/library-02.jpg', tone: 'rust' },
-  { title: 'Psychology of Money', author: 'Morgan Housel', image: '/assets/library-03.jpg', tone: 'sand' },
-  { title: 'Clean Code', author: 'Robert C. Martin', image: '/assets/library-04.jpg', tone: 'ink' },
+  { title: 'Atomic Habits', author: 'James Clear', image: '/assets/library-01.jpg', tone: 'cream', href: 'https://www.google.com/search?tbm=bks&q=Atomic+Habits+James+Clear' },
+  { title: 'Deep Work', author: 'Cal Newport', image: '/assets/library-02.jpg', tone: 'rust', href: 'https://www.google.com/search?tbm=bks&q=Deep+Work+Cal+Newport' },
+  { title: 'Psychology of Money', author: 'Morgan Housel', image: '/assets/library-03.jpg', tone: 'sand', href: 'https://www.google.com/search?tbm=bks&q=Psychology+of+Money+Morgan+Housel' },
+  { title: 'Clean Code', author: 'Robert C. Martin', image: '/assets/library-04.jpg', tone: 'ink', href: 'https://www.google.com/search?tbm=bks&q=Clean+Code+Robert+C+Martin' },
+  { title: 'Lord of Mysteries', author: 'Cuttlefish That Loves Diving', image: '/assets/book-lord-of-mysteries.jpg', tone: 'lotm', href: 'https://www.google.com/search?tbm=bks&q=Lord+of+Mysteries+Cuttlefish+That+Loves+Diving' },
 ]
 
 export const socials = [
   { label: 'GitHub', href: 'https://github.com/Haricharan-20', mark: 'GH' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/', mark: 'IN' },
-  { label: 'Email', href: 'mailto:haricharan@example.com', mark: '@' },
-  { label: 'X', href: 'https://x.com/', mark: 'X' },
+  { label: 'Instagram', href: 'https://www.instagram.com/hari_charan_20/', mark: 'IG' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/v-hari-charan-1aba93398', mark: 'IN' },
+  { label: 'Gmail', href: 'mailto:haricharan9845@gmail.com', mark: '@' },
+  { label: 'X', href: 'https://x.com/Hari_charan_20', mark: 'X' },
 ]

@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDownRight, ArrowUpRight, Check, ExternalLink, Menu, MoveRight, X } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Check, ExternalLink, Github, Instagram, Linkedin, Mail, Menu, MoveRight, X } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { experience, library, navItems, projects, skills, socials, type Project } from './data'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const spotifyTracks = [
+  { title: 'After Dark', artist: 'Mr.Kitty', id: '2LKOHdMsL0K9KwcPRlJK2v' },
+  { title: 'aruarian dance', artist: 'Nujabes', id: '4sUTagdmyuyAxd7RvbygpQ' },
+  { title: 'The Perfect Girl', artist: 'Mareux', id: '5RBOcBpJXaNnHCGViJmYhh' },
+]
+
 
 function useMotionSystem(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -35,9 +42,28 @@ function useMotionSystem(root: React.RefObject<HTMLElement | null>) {
       hero
         .from('.hero__topline', { opacity: 0, y: -16, duration: 0.8 })
         .from('.hero__kicker', { opacity: 0, x: -24, duration: 0.6 }, '-=0.35')
-        .from('.hero__title-line', { opacity: 0, yPercent: 100, stagger: 0.12, duration: 0.85 }, '-=0.2')
-        .from('.hero__signature', { opacity: 0, x: -30, rotate: -7, duration: 0.9 }, '-=0.3')
-        .from('.hero__rail, .hero__detail, .hero__keywords', { opacity: 0, duration: 0.8, stagger: 0.12 }, '-=0.35')
+        .from('.hero__lockup', { opacity: 0, y: 28, scale: 0.97, duration: 1, ease: 'power3.out' }, '-=0.2')
+        .from('.hero__keywords', { opacity: 0, duration: 0.8 }, '-=0.35')
+
+      /* About portrait: a restrained editorial morph instead of a static reveal. */
+      const aboutPortrait = document.querySelector('.about__portrait')
+      if (aboutPortrait) {
+        const image = aboutPortrait.querySelector('img')
+        gsap.fromTo(aboutPortrait,
+          { clipPath: 'polygon(12% 4%, 96% 0, 100% 90%, 4% 100%)', rotate: -2, scale: 0.94, y: 34 },
+          { clipPath: 'polygon(0 0, 100% 2%, 96% 100%, 2% 96%)', rotate: 0, scale: 1, y: 0, ease: 'none',
+            scrollTrigger: { trigger: aboutPortrait, start: 'top 88%', end: 'bottom 35%', scrub: 1.15 } })
+        if (image) gsap.to(image, { scale: 1.06, xPercent: 1.5, yPercent: -2, ease: 'none',
+          scrollTrigger: { trigger: aboutPortrait, start: 'top bottom', end: 'bottom top', scrub: 1.4 } })
+      }
+
+      const contactPortrait = document.querySelector('.contact__portrait')
+      if (contactPortrait) {
+        gsap.fromTo(contactPortrait,
+          { clipPath: 'inset(0 18% 0 18%)', scale: 1.08, x: 28 },
+          { clipPath: 'inset(0 0% 0 0%)', scale: 1, x: 0, ease: 'none',
+            scrollTrigger: { trigger: contactPortrait, start: 'top 90%', end: 'bottom 45%', scrub: 1.1 } })
+      }
 
       gsap.utils.toArray<HTMLElement>('.drive-word').forEach((word, index) => {
         gsap.fromTo(
@@ -113,20 +139,47 @@ function useBreakingTransform(sectionRef: React.RefObject<HTMLElement | null>) {
       const media = gsap.matchMedia()
       media.add({ mobile: '(max-width: 700px)', desktop: '(min-width: 701px)' }, (conditions) => {
         const isMobile = Boolean(conditions?.mobile)
-        const chars = gsap.utils.toArray<HTMLElement>('.breaking-char')
         const track = section.querySelector<HTMLElement>('.breaking-track')
-        const fragments = gsap.utils.toArray<HTMLElement>('.breaking-fragment')
-        if (!track) return () => undefined
-        gsap.set(chars, { opacity: 0.48, y: (index) => (index % 2 ? -18 : 18) * (isMobile ? 0.55 : 1), rotate: (index) => (index % 2 ? -2 : 2) * (isMobile ? 0.65 : 1) })
-        const horizontalTravel = isMobile ? `-${Math.min(window.innerWidth * 0.08, 28)}px` : `-${Math.min(window.innerWidth * 0.2, 280)}px`
+        const chars = gsap.utils.toArray<HTMLElement>('.breaking-char')
+        if (!track || !chars.length) return () => undefined
+
+        const fromX = isMobile ? 34 : 110
+        const fromY = isMobile ? 30 : 72
         const timeline = gsap.timeline({
-          defaults: { ease: 'power2.out' },
-          scrollTrigger: { trigger: section, start: 'top top', end: isMobile ? '+=125%' : '+=155%', scrub: 1, pin: true, anticipatePin: 1 },
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: isMobile ? '+=125%' : '+=145%',
+            scrub: 0.65,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
         })
+
+        gsap.set(track, { x: isMobile ? 18 : 42, opacity: 1 })
+        gsap.set(chars, {
+          x: (i) => (i % 2 ? fromX : -fromX),
+          y: (i) => ((i % 5) - 2) * fromY,
+          rotate: (i) => ((i % 3) - 1) * (isMobile ? 5 : 8),
+          opacity: 0.18,
+          scale: (i) => 0.94 + (i % 3) * 0.03,
+          transformOrigin: '50% 100%',
+        })
+
         timeline
-          .to(track, { x: horizontalTravel, ease: 'none', duration: 1 }, 0)
-          .to(chars, { opacity: 1, y: 0, rotate: 0, z: (index) => (index % 3 - 1) * (isMobile ? 10 : 24), stagger: { each: isMobile ? 0.012 : 0.018, from: 'start' }, duration: 0.82 }, 0.06)
-          .to(fragments, { x: (index) => (index % 2 ? -12 : 15) * (isMobile ? 0.45 : 1), y: (index) => (index % 2 ? 10 : -12) * (isMobile ? 0.45 : 1), rotate: (index) => (index % 2 ? -8 : 8), scale: 1.08, opacity: 0.8, stagger: 0.03 }, 0.12)
+          .to(track, { x: 0, duration: 1, ease: 'power2.out' }, 0)
+          .to(chars, {
+            x: 0,
+            y: 0,
+            rotate: 0,
+            scale: 1,
+            opacity: 1,
+            stagger: { each: isMobile ? 0.035 : 0.024, from: 'edges' },
+            duration: 1.45,
+            ease: 'power3.out',
+          }, 0.05)
+
         return () => timeline.kill()
       })
     }, section)
@@ -181,23 +234,14 @@ function Hero() {
         <div className="hero__kicker micro-copy">CYBERSECURITY <b>//</b> AI AUTOMATION<br /><span>BUILDING TOOLS <b>//</b> BREAKING SYSTEMS <b>//</b> EXPLORING IDEAS</span></div>
         <div className="hero__title-wrap">
           <h1 className="hero__title" aria-label="Hari Charan">
-            <span className="hero__title-line">HARI</span>
-            <span className="hero__title-line hero__title-line--cream">CHARAN</span>
+            <img className="hero__lockup" src="/assets/hari-charan-lockup.png" alt="Hari Charan" />
           </h1>
-          <div className="hero__signature">Hari Charan</div>
         </div>
         <div className="hero__meta">01 / 04 <span>SCROLL TO EXPLORE</span><ArrowDownRight size={18} /></div>
       </div>
       <div className="hero__keywords" aria-label="Focus areas">
         {['BUILD', 'EXPLORE', 'LEARN', 'BREAK', 'AUTOMATE'].map((word) => <span key={word}>{word}</span>)}
       </div>
-      <div className="hero__rail" aria-hidden="true">
-        <div className="hero__rail-card hero__rail-card--one"><img src="/assets/portrait-main.jpg" alt="" /><span>01<br />/ 04</span></div>
-        <div className="hero__rail-card hero__rail-card--two"><img src="/assets/portrait-detail.jpg" alt="" /><span>02<br />/ 04</span></div>
-        <div className="hero__rail-card hero__rail-card--three"><img src="/assets/portrait-contact.jpg" alt="" /><span>03<br />/ 04</span></div>
-        <div className="hero__rail-rule" />
-      </div>
-      <div className="hero__detail"><img src="/assets/portrait-detail.jpg" alt="Close portrait detail" /><span>DETAIL / 02</span></div>
       <div className="hero__aside-note"><span>01</span><p>A quieter mind<br />A louder vision.</p></div>
       <div className="crosshair crosshair--hero" /><span className="hero__corner-mark">＋</span>
     </section>
@@ -327,14 +371,50 @@ function BreakingSection() {
   )
 }
 
+function SpotifyPlayer() {
+  const [selected, setSelected] = useState(0)
+  const track = spotifyTracks[selected]
+  return (
+    <div className="spotify-player" data-reveal>
+      <div className="spotify-player__top">
+        <div>
+          <span className="spotify-player__eyebrow">NOW / LISTENING</span>
+          <strong>{track.title}</strong>
+          <span>{track.artist}</span>
+        </div>
+        <span className="spotify-player__mark">S</span>
+      </div>
+      <div className="spotify-player__stage">
+        <iframe
+          key={track.id}
+          title={`Spotify player — ${track.title}`}
+          src={`https://open.spotify.com/embed/track/${track.id}?utm_source=generator&theme=0`}
+          width="100%"
+          height="80"
+          frameBorder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        />
+      </div>
+      <div className="spotify-player__tracks" aria-label="Choose a track">
+        {spotifyTracks.map((item, index) => (
+          <button key={item.id} type="button" className={selected === index ? 'is-active' : ''} onClick={() => setSelected(index)}>
+            0{index + 1} / {item.title}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function DrivesSection() {
   return (
     <section className="drives section-paper" id="drives" data-section>
       <SectionLabel number="07" label="What drives me" />
       <div className="drives__layout">
-        <div className="drives__copy" data-reveal><p className="eyebrow">THE QUESTIONS BEHIND THE WORK</p><h2>WHAT DRIVES <em>ME</em></h2><p className="drives__statement"><span className="drive-word">I like</span> <span className="drive-word">breaking things,</span> <span className="drive-word">learning them,</span> <span className="drive-word">and building</span> <span className="drive-word">better tools.</span></p><a className="pill-button pill-button--dark" href="#contact">See my library <ArrowUpRight size={14} /></a></div>
+        <div className="drives__copy" data-reveal><p className="eyebrow">THE QUESTIONS BEHIND THE WORK</p><h2>WHAT DRIVES <em>ME</em></h2><p className="drives__statement"><span className="drive-word">I like</span> <span className="drive-word">breaking things,</span> <span className="drive-word">learning them,</span> <span className="drive-word">and building</span> <span className="drive-word">better tools.</span></p><a className="pill-button pill-button--dark" href="#contact">See my library <ArrowUpRight size={14} /></a><SpotifyPlayer /></div>
         <div className="library-strip" data-reveal aria-label="Personal visual library">
-          {library.map((book) => <div className={`book-card book-card--${book.tone}`} key={book.title}><img src={book.image} alt="" loading="lazy" /><div className="book-card__copy"><strong>{book.title}</strong><span>{book.author}</span></div></div>)}
+          {library.map((book) => <a className={'book-card book-card--' + book.tone} key={book.title} href={book.href} target="_blank" rel="noreferrer" aria-label={'Read ' + book.title}><img src={book.image} alt="" loading="lazy" /><div className="book-card__copy"><strong>{book.title}</strong><span>{book.author}</span></div><span className="book-card__link" aria-hidden="true"><ArrowUpRight size={13} /></span></a>)}
           <div className="library-note">GOOD<br />BOOKS<br />DEEPER<br />THINKING<br /><span>///</span></div>
         </div>
       </div>
@@ -348,7 +428,10 @@ function ContactSection() {
       <SectionLabel number="08" label="Let's connect" dark />
       <div className="contact__layout">
         <div className="contact__copy" data-reveal><p className="eyebrow eyebrow--light">OPEN TO THE NEXT QUESTION</p><h2>LET'S <em>CONNECT</em></h2><p>Open to collaboration, internships, projects, and exciting opportunities.</p><a className="pill-button pill-button--light" href="mailto:haricharan@example.com">Get in touch <ArrowUpRight size={14} /></a></div>
-        <div className="contact__socials" data-reveal>{socials.map((social) => <a href={social.href} key={social.label} target={social.href.startsWith('http') ? '_blank' : undefined} rel={social.href.startsWith('http') ? 'noreferrer' : undefined}><span>{social.mark}</span>{social.label}<ArrowUpRight size={14} /></a>)}</div>
+        <div className="contact__socials" data-reveal>{socials.map((social) => {
+          const Icon = social.label === 'GitHub' ? Github : social.label === 'Instagram' ? Instagram : social.label === 'LinkedIn' ? Linkedin : social.label === 'Gmail' ? Mail : null
+          return <a href={social.href} key={social.label} target={social.href.startsWith('http') ? '_blank' : undefined} rel={social.href.startsWith('http') ? 'noreferrer' : undefined}><span className="contact__social-icon">{Icon ? <Icon size={15} strokeWidth={1.7} /> : social.mark}</span>{social.label}<ArrowUpRight size={14} /></a>
+        })}</div>
         <div className="contact__portrait" data-reveal><img src="/assets/portrait-contact.jpg" alt="Portrait of Hari Charan" loading="lazy" /><div className="contact__portrait-note">IDEAS<br />DISCUSSIONS<br />OPPORTUNITIES<br />ALWAYS OPEN<br /><span>///</span></div></div>
       </div>
       <footer className="site-footer"><span>HC / HARI CHARAN</span><span>CYBERSECURITY // AI AUTOMATION</span><span>© 2025—26</span></footer>
